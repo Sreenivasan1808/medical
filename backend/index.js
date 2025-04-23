@@ -30,7 +30,10 @@ const authRoutes = require("./routes/authRoutes");
 const patientRecordRoutes = require("./routes/patientRecordRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
+const mlRoutes = require("./routes/mlRoutes")
 app.use("/auth", authRoutes);
 app.use("/patient-records", patientRecordRoutes);
 app.use("/patient", patientRoutes);
 app.use("/doctor", doctorRoutes);
+app.use("/ml", mlRoutes);
+

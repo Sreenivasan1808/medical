@@ -38,6 +38,9 @@ const patientRecordSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    aiDiagnosis:{
+      type:String,
+    },
     medication: {
       type: [medicationSchema],
       required: true,

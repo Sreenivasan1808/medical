@@ -5,7 +5,7 @@ import {
   updatePatientRecord,
   deletePatientRecord,
 } from "../services/patientSVC";
-import { getDoctorById } from "../services/doctorSVC";
+import { getDoctorById, getAiPrediction } from "../services/doctorSVC";
 import { logout } from "../services/authSVC";
 import { UserCircleIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
@@ -36,8 +36,8 @@ const DoctorDashboardBento = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
-    
-    navigate('/')
+
+    navigate("/");
   };
 
   const fetchDoctorDetails = async () => {
@@ -156,6 +156,29 @@ const DoctorDashboardBento = () => {
     }
   };
 
+  const handleFileChange = async (recordId, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      // 1. upload the file to your backend
+      const patientId = records[recordId].patientId;
+      await getAiPrediction(patientId, file);
+      // 2. re-fetch the list so UI updates
+      await fetchRecords();
+      if(editingIndex){
+        handleCancelEdit();
+      }
+      alert("Test results uploaded successfully.");
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Failed to upload test results.");
+    } finally {
+      // reset the input so the same file can be re‐selected if needed
+      e.target.value = "";
+    }
+  };
+
   const handleDeleteRecord = async (recordId) => {
     const confirm = window.confirm(
       "Are you sure you want to delete this record?"
@@ -205,6 +228,7 @@ const DoctorDashboardBento = () => {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Patient Record Form */}
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-4">Add Patient Record</h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
@@ -385,6 +409,22 @@ const DoctorDashboardBento = () => {
                         }
                         className="border rounded px-2 py-1 w-full"
                       />
+                      <div className="flex gap-2 items-center">
+                      <p>AI Diagnosis: </p>
+                        <label
+                          htmlFor="file-upload"
+                          className="bg-green-300 rounded-lg px-4 py-2 hover:scale-95 hover:cursor-pointer"
+                        >
+                          Upload test results
+                        </label>
+                        <input
+                          className="border-2 py-2 px-4 bg-green-100 rounded-lg hidden hover:scale-95"
+                          id="file-upload"
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => handleFileChange(index, e)}
+                        />
+                      </div>
                       <div className="space-y-1">
                         {editData.medication?.map((med, i) => (
                           <div key={i} className="grid grid-cols-3 gap-2">
@@ -463,6 +503,28 @@ const DoctorDashboardBento = () => {
                       <p>
                         <span className="font-semibold">Diagnosis:</span>{" "}
                         {record.currentDiagnosis}
+                      </p>
+                      <p>
+                        <span className="font-semibold">AI Diagnosis:</span>{" "}
+                        {record.aiDiagnosis ? (
+                          record.aiDiagnosis
+                        ) : (
+                          <>
+                            <label
+                              htmlFor="file-upload"
+                              className="bg-green-300 rounded-lg px-4 py-2 hover:scale-95 hover:cursor-pointer"
+                            >
+                              Upload test results
+                            </label>
+                            <input
+                              className="border-2 py-2 px-4 bg-green-100 rounded-lg hidden hover:cursor-pointer hover:scale-95"
+                              id="file-upload"
+                              type="file"
+                              accept=".csv"
+                              onChange={(e) => handleFileChange(index, e)}
+                            />
+                          </>
+                        )}
                       </p>
                       <div>
                         <span className="font-semibold">Medication:</span>
