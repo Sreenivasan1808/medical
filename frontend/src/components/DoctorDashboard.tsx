@@ -17,7 +17,7 @@ const DoctorDashboardBento = () => {
     patientId: "",
     lastVisitDate: "",
     nextVisitDate: "",
-    currentDiagnosis: "",
+    currentDiagnosis: " ",
     medication: [{ name: "", dosage: "", time: "" }],
   });
   const [editingIndex, setEditingIndex] = useState(null);
@@ -156,14 +156,14 @@ const DoctorDashboardBento = () => {
     }
   };
 
-  const handleFileChange = async (recordId, e) => {
+  const handleFileChange = async (recordId, e, disease) => {
     const file = e.target.files[0];
     if (!file) return;
 
     try {
       // 1. upload the file to your backend
       const patientId = records[recordId].patientId;
-      await getAiPrediction(patientId, file);
+      await getAiPrediction(patientId, file, disease);
       // 2. re-fetch the list so UI updates
       await fetchRecords();
       if(editingIndex){
@@ -275,7 +275,7 @@ const DoctorDashboardBento = () => {
                 className="border border-gray-300 rounded px-3 py-2 w-full"
               />
             </div>
-            <div className="flex items-center gap-4">
+            {/* <div className="flex items-center gap-4">
               <label htmlFor="currentDiagnosis" className="w-36 text-right">
                 Diagnosis:
               </label>
@@ -288,7 +288,7 @@ const DoctorDashboardBento = () => {
                 className="border border-gray-300 rounded px-3 py-2 w-full"
                 required
               />
-            </div>
+            </div> */}
             <div className="flex items-center justify-between">
               <label className="w-36 text-right">Medication:</label>
               <button
@@ -397,7 +397,7 @@ const DoctorDashboardBento = () => {
                         }
                         className="border rounded px-2 py-1 w-full"
                       />
-                      <input
+                      {/* <input
                         type="text"
                         value={editData.currentDiagnosis}
                         onChange={(e) =>
@@ -408,9 +408,9 @@ const DoctorDashboardBento = () => {
                           )
                         }
                         className="border rounded px-2 py-1 w-full"
-                      />
+                      /> */}
                       <div className="flex gap-2 items-center">
-                      <p>AI Diagnosis: </p>
+                      <p>AI Diagnosis for Parkinson Disease: </p>
                         <label
                           htmlFor="file-upload"
                           className="bg-green-300 rounded-lg px-4 py-2 hover:scale-95 hover:cursor-pointer"
@@ -422,7 +422,24 @@ const DoctorDashboardBento = () => {
                           id="file-upload"
                           type="file"
                           accept=".csv"
-                          onChange={(e) => handleFileChange(index, e)}
+                          onChange={(e) => handleFileChange(index, e, 1)}
+                        />
+                      </div>
+                      <div className="flex gap-2 items-center">
+                      <p>AI Diagnosis for Diabetes: </p>
+                        <label
+                          htmlFor="file-upload2"
+                          className="bg-green-300 rounded-lg px-4 py-2 hover:scale-95 hover:cursor-pointer"
+                        >
+                          Upload test results
+                        </label>
+                        <input
+                          className="border-2 py-2 px-4 bg-green-100 rounded-lg hidden hover:scale-95"
+                          id="file-upload2"
+                          name="diabetes"
+                          type="file"
+                          accept=".csv"
+                          onChange={(e) => handleFileChange(index, e, 2)}
                         />
                       </div>
                       <div className="space-y-1">
@@ -500,12 +517,12 @@ const DoctorDashboardBento = () => {
                           ? new Date(record.nextVisitDate).toLocaleDateString()
                           : "-"}
                       </p>
-                      <p>
+                      {/* <p>
                         <span className="font-semibold">Diagnosis:</span>{" "}
                         {record.currentDiagnosis}
-                      </p>
+                      </p> */}
                       <p>
-                        <span className="font-semibold">AI Diagnosis:</span>{" "}
+                        <span className="font-semibold">AI Diagnosis for Parkinson Disease:</span>{" "}
                         {record.aiDiagnosis ? (
                           record.aiDiagnosis
                         ) : (
@@ -521,7 +538,29 @@ const DoctorDashboardBento = () => {
                               id="file-upload"
                               type="file"
                               accept=".csv"
-                              onChange={(e) => handleFileChange(index, e)}
+                              onChange={(e) => handleFileChange(index, e, 1)}
+                            />
+                          </>
+                        )}
+                      </p>
+                      <p>
+                        <span className="font-semibold">AI Diagnosis for Diabetes:</span>{" "}
+                        {record.diabetesDiagnosis ? (
+                          record.diabetesDiagnosis
+                        ) : (
+                          <>
+                            <label
+                              htmlFor="file-upload"
+                              className="bg-green-300 rounded-lg px-4 py-2 hover:scale-95 hover:cursor-pointer"
+                            >
+                              Upload test results
+                            </label>
+                            <input
+                              className="border-2 py-2 px-4 bg-green-100 rounded-lg hidden hover:cursor-pointer hover:scale-95"
+                              id="file-upload"
+                              type="file"
+                              accept=".csv"
+                              onChange={(e) => handleFileChange(index, e, 2)}
                             />
                           </>
                         )}

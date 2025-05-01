@@ -83,6 +83,12 @@ const PatientDashboard = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-2">
                 Diagnosis: <span className="text-green-600">{record.currentDiagnosis}</span>
               </h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                AI Diagnosis for Parkinson Disease: <span className="text-green-600">{record.aiDiagnosis}</span>
+              </h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                AI Diagnosis for Diabetes: <span className="text-green-600">{record.diabetesDiagnosis}</span>
+              </h2>
               <p className="text-sm text-gray-600">
                 Last Visit: <span className="font-semibold">{new Date(record.lastVisitDate).toLocaleDateString()}</span> | Next Visit:{" "}
                 <span className="font-semibold">{new Date(record.nextVisitDate).toLocaleDateString()}</span>
